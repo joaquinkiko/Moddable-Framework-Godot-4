@@ -79,7 +79,7 @@ func _load_resource_packs() -> void:
 			ProjectSettings.load_resource_pack("%s/%s"%[dir_to_check, file], false)
 			loaded_packs_paths.append("%s/%s"%[dir_to_check, file])
 	if not ModdableFrameworkMainLoopSettings.get_setting("DLC/SearchForPacks"): return
-	dir_to_check == ProjectSettings.globalize_path("%s/%s"%[OS.get_executable_path().get_base_dir(), ModdableFrameworkMainLoopSettings.get_setting("DLC/SearchDir")])
+	dir_to_check = ProjectSettings.globalize_path("%s/%s"%[OS.get_executable_path().get_base_dir(), ModdableFrameworkMainLoopSettings.get_setting("DLC/SearchDir")])
 	if not DirAccess.dir_exists_absolute(dir_to_check): return
 	for file in DirAccess.get_files_at(dir_to_check):
 		if file.get_extension() == "pck":
@@ -87,7 +87,7 @@ func _load_resource_packs() -> void:
 			ProjectSettings.load_resource_pack("%s/%s"%[dir_to_check, file], false)
 			loaded_dlc_packs_paths.append("%s/%s"%[dir_to_check, file])
 	if not ModdableFrameworkMainLoopSettings.get_setting("Patches/SearchForPacks"): return
-	dir_to_check == ProjectSettings.globalize_path("%s/%s"%[OS.get_executable_path().get_base_dir(), ModdableFrameworkMainLoopSettings.get_setting("Patches/SearchDir")])
+	dir_to_check = ProjectSettings.globalize_path("%s/%s"%[OS.get_executable_path().get_base_dir(), ModdableFrameworkMainLoopSettings.get_setting("Patches/SearchDir")])
 	if not DirAccess.dir_exists_absolute(dir_to_check): return
 	for file in DirAccess.get_files_at(dir_to_check):
 		if file.get_extension() == "pck":
@@ -120,7 +120,7 @@ func _load_extensions() -> void:
 	for dir in DirAccess.get_directories_at(dir_to_check):
 		if OS.has_feature(dir):
 			for file in DirAccess.get_files_at("%s/%s"%[dir_to_check, dir]):
-				_generate_gdextension("%s/%s"%[dir_to_check, file], expected_cfg)
+				_generate_gdextension("%s/%s/%s"%[dir_to_check, dir, file], expected_cfg)
 	for file in DirAccess.get_files_at(dir_to_check):
 		_generate_gdextension("%s/%s"%[dir_to_check, file], expected_cfg)
 	
@@ -174,10 +174,11 @@ func _initialize_asset_library() -> void:
 ## (Editor only) Copies extension dependencies into Godot editor executable's directory
 func _editor_load_dependencies(dir: String) -> void:
 	if not OS.has_feature("editor"): return
+	if not DirAccess.dir_exists_absolute(dir): return
 	for sub_dir in DirAccess.get_directories_at(dir):
 		if OS.has_feature(sub_dir):
 			for file in DirAccess.get_files_at("%s/%s"%[dir, sub_dir]):
-				if not (file.begins_with("dll") or file.begins_with("so")): continue
+				if not (file.get_extension() == "dll" or file.get_extension() == "so"): continue
 				var expected: String = "%s/%s"%[OS.get_executable_path().get_base_dir(), file]
 				if FileAccess.file_exists(expected): continue
 				DirAccess.copy_absolute("%s/%s/%s"%[dir, sub_dir, file], expected)
