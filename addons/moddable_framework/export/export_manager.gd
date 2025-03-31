@@ -130,7 +130,7 @@ func _export_end() -> void:
 		print("Extensions Exported:")
 		for file in _exported_extensions:
 			print("\t%s"%file)
-			break
+			continue
 	_export_license_file()
 	print("Exported in %s seconds"%ceili((float(Time.get_ticks_msec() - _build_start_time) / 1000)))
 	print("Final export size: %s\n"%String.humanize_size(_get_build_size()))
