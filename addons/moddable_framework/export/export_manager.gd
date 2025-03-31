@@ -331,21 +331,21 @@ func _export_extensions() -> void:
 				for extension in _exported_extensions: if extension.get_file() == extension.get_file(): continue
 				_exported_extensions.append(file)
 				DirAccess.copy_absolute("%s/%s"%[dependencies_path, file], "%s/%s"%[_export_dir, file])
-	if DirAccess.dir_exists_absolute(extensions_path):
-		if DirAccess.get_files_at(extensions_path).size() > 0:
+	if DirAccess.dir_exists_absolute(base_extensions_path):
+		if DirAccess.get_files_at(base_extensions_path).size() > 0:
 			if not DirAccess.dir_exists_absolute(_extensions_dir):
 				DirAccess.make_dir_recursive_absolute(_extensions_dir)
-		for file in DirAccess.get_files_at(extensions_path):
+		for file in DirAccess.get_files_at(base_extensions_path):
 			if _features.has("ignore-%s"%file.get_basename()): continue
 			for extension in _exported_extensions: if extension.get_file() == extension.get_file(): continue
 			_exported_extensions.append(file)
-			DirAccess.copy_absolute("%s/%s"%[extensions_path, file], "%s/%s"%[_extensions_dir, file])
-	if DirAccess.dir_exists_absolute(dependencies_path):
-		for file in DirAccess.get_files_at(dependencies_path):
+			DirAccess.copy_absolute("%s/%s"%[base_extensions_path, file], "%s/%s"%[_extensions_dir, file])
+	if DirAccess.dir_exists_absolute(base_dependencies_path):
+		for file in DirAccess.get_files_at(base_dependencies_path):
 			if _features.has("ignore-%s"%file.get_basename()): continue
 			for extension in _exported_extensions: if extension.get_file() == extension.get_file(): continue
 			_exported_extensions.append(file)
-			DirAccess.copy_absolute("%s/%s"%[dependencies_path, file], "%s/%s"%[_export_dir, file])
+			DirAccess.copy_absolute("%s/%s"%[base_dependencies_path, file], "%s/%s"%[_export_dir, file])
 
 func _export_expected_resources() -> void:
 	var cfg := ConfigFile.new()
@@ -372,11 +372,18 @@ func _export_expected_resources() -> void:
 		extensions_path = extensions_path + "/debug"
 	else:
 		extensions_path = extensions_path + "/release"
-	if DirAccess.dir_exists_absolute(extensions_path):
-		for file in DirAccess.get_files_at(extensions_path):
+	var base_extensions_path := extensions_path
+	for feature in _features:
+		extensions_path = "%s/%s"%[base_extensions_path, feature]
+		if DirAccess.dir_exists_absolute(extensions_path):
+			for file in DirAccess.get_files_at(extensions_path):
+				if _features.has("ignore-%s"%file.get_basename()): continue
+				cfg.set_value("extensions", file, FileAccess.get_md5("%s/%s"%[extensions_path,file]))
+	if DirAccess.dir_exists_absolute(base_extensions_path):
+		for file in DirAccess.get_files_at(base_extensions_path):
 			if _features.has("ignore-%s"%file.get_basename()): continue
-			cfg.set_value("extensions", file, FileAccess.get_md5("%s/%s"%[extensions_path,file]))
-			
+			cfg.set_value("extensions", file, FileAccess.get_md5("%s/%s"%[base_extensions_path,file]))
+	
 	for key in _colored_folders_keys:
 		if ModdableFrameworkExportSettings.get_setting("ExportOptions/DirColorAction%s"%_colored_folders[key].capitalize()) == ModdableFrameworkExportSettings.DirColorActions.EXPORT_UNPACKED:
 			for file in get_all_file_paths(key):
