@@ -142,8 +142,11 @@ static func reload_mod_list() -> void:
 		if not mod_dependencies_fulfilled(enabled_mod): 
 			set_mod(enabled_mod, false)
 	save_mod_settings()
-	if ModdableFrameworkLibrarySettings.get_setting("Library/Verbose"): 
-		print("Loaded %s mods in %sms"%[found_dirs.size(), (Time.get_ticks_msec() - start_tick)])
+	if ModdableFrameworkLibrarySettings.get_setting("Library/Verbose"):
+		if found_dirs.size() > 1:
+			print("Detected %s mods in %sms (%s enabled)"%[found_dirs.size(), (Time.get_ticks_msec() - start_tick), enabled_mods.size()])
+		else:
+			print("Detected %s mod in %sms (%s enabled)"%[found_dirs.size(), (Time.get_ticks_msec() - start_tick), enabled_mods.size()])
 
 ## Returns directory of specified mod if it exists
 static func get_mod_directory(mod: String) -> String:
