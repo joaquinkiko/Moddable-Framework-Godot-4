@@ -20,11 +20,6 @@ static var enabled_mods: PackedStringArray = []
 static var mod_settings := ConfigFile.new()
 
 static func initialize() -> void:
-	if not DirAccess.dir_exists_absolute(MOD_DIR) and not run_modless():
-		DirAccess.make_dir_recursive_absolute(MOD_DIR)
-	if DirAccess.dir_exists_absolute(MOD_DIR):
-		if FileAccess.file_exists(MOD_SETTINGS_PATH): mod_settings.load(MOD_SETTINGS_PATH)
-		else: mod_settings.save(MOD_SETTINGS_PATH)
 	reload_mod_list()
 	if libraries.is_empty(): return
 	var start_tick := Time.get_ticks_msec()
@@ -109,6 +104,9 @@ static func run_modless() -> bool:
 
 ## Updates mod settings, adding new mods, and removing missing mods, and refreshing load order
 static func reload_mod_list() -> void:
+	if not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(MOD_DIR)): return
+	if FileAccess.file_exists(MOD_SETTINGS_PATH): mod_settings.load(MOD_SETTINGS_PATH)
+	else: mod_settings.save(MOD_SETTINGS_PATH)
 	if run_modless():
 		if ModdableFrameworkLibrarySettings.get_setting("Library/Verbose"): 
 			print("Running modless. Reload mod list skipped.")
