@@ -65,6 +65,4 @@ static func get_function_classes(function: String) -> PackedStringArray:
 	return output
 
 static func get_function_method(function: String) -> String:
-	if ProjectSettings.has_setting("%s/Static/%sFunction"%[BASE_SETTING_PATH, function]):
-		return get_setting("Static/%sFunction"%function)
-	else: return ""
+	return get_setting("Static/%sFunction"%function)

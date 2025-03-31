@@ -227,12 +227,12 @@ func _call_static_function(function: String, params := Array([])) -> void:
 		if not ResourceLoader.exists(static_class): 
 			push_warning("Couldn't find static class (%s) to call (%s) on"%[static_class, method])
 			continue
-		var gdscript := load(static_class).new() as GDScript
+		var gdscript := load(static_class) as GDScript
 		if gdscript == null:
 			push_warning("Couldn't find static class (%s) to call (%s) on"%[static_class, method])
 			continue
-		if not gdscript.has_meta(method): 
-			push_warning("Couldn't find method (%s) in static class (%s)"%[method, static_class])
+		if not gdscript.has_method(method): 
+			push_warning("Couldn't find method (%s) in static class (%s)-- Ensure function is static"%[method, static_class])
 			continue
 		if params.size() == 0:
 			gdscript.call(method)
