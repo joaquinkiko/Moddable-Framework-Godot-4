@@ -31,7 +31,7 @@ static func initialize() -> void:
 		library.add_all_from_dir()
 		library.add_all_from_executable_dir()
 		for mod in enabled_mods:
-			library.add_all_from_mod_dir("%s/%s"%[MOD_DIR, enabled_mods])
+			library.add_all_from_mod_dir("%s/%s"%[MOD_DIR, mod])
 		if ModdableFrameworkLibrarySettings.get_setting("Library/Verbose"): 
 			print("\tLoaded %s: %s"%[library.index_name, library.assets.size()])
 		count += library.assets.size()
@@ -54,7 +54,7 @@ static func reload_libraries() -> void:
 		library.add_all_from_dir()
 		library.add_all_from_executable_dir()
 		for mod in enabled_mods:
-			library.add_all_from_mod_dir("%s/%s"%[MOD_DIR, enabled_mods])
+			library.add_all_from_mod_dir("%s/%s"%[MOD_DIR, mod])
 		if ModdableFrameworkLibrarySettings.get_setting("Library/Verbose"): 
 			print("\tLoaded %s: %s"%[library.index_name, library.assets.size()])
 	if ModdableFrameworkLibrarySettings.get_setting("Library/Verbose"): 
@@ -120,7 +120,7 @@ static func reload_mod_list() -> void:
 	if DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(MOD_DIR)):
 		found_dirs = DirAccess.get_directories_at(MOD_DIR)
 		for dir in found_dirs:
-			if mod_settings.get_value("LoadOrder", dir, null) == null:
+			if not mod_settings.has_section("LoadOrder") or mod_settings.get_value("LoadOrder", dir, null) == null:
 				mod_settings.set_value("LoadOrder", dir, -1)
 		if mod_settings.has_section("LoadOrder"):
 			for dir in mod_settings.get_section_keys("LoadOrder"):
@@ -132,11 +132,12 @@ static func reload_mod_list() -> void:
 				if mod_settings.get_value("LoadOrder", mod, -1) >= 0:
 					mods_to_load[mod_settings.get_value("LoadOrder", mod, -1)] = mod
 			var order: int = 0
-			for n in range(0, mods_to_load.values().max() + 1):
-				if not mods_to_load.has(n): continue
-				mod_settings.set_value("LoadOrder", mods_to_load[n], order)
-				enabled_mods.append(mods_to_load[n])
-				order += 1
+			if not mods_to_load.keys().size() == 0:
+				for n in range(0, mods_to_load.keys().max() + 1):
+					if not mods_to_load.has(n): continue
+					mod_settings.set_value("LoadOrder", mods_to_load[n], order)
+					enabled_mods.append(mods_to_load[n])
+					order += 1
 	for enabled_mod in enabled_mods:
 		if not mod_dependencies_fulfilled(enabled_mod): 
 			set_mod(enabled_mod, false)
