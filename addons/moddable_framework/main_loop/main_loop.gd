@@ -20,22 +20,22 @@ func _initialize() -> void:
 		var third_party_extensions_count := 0
 		for path in third_party_paths: if path.get_extension() == "dll" or path.get_extension() == "so":
 			third_party_extensions_count += 1
-			if third_party_extensions_count > 0:
-				print("\tThird-Party Library Extension detected: %s"%third_party_extensions_count)
+		if third_party_extensions_count > 0:
+			print("\tThird-Party Library Extension detected: %s"%third_party_extensions_count)
 	_load_resource_packs()
 	if ModdableFrameworkMainLoopSettings.get_setting("Bootup/Verbose"): 
 		var third_party_pack_count := 0
 		for path in third_party_paths: if path.get_extension() == "pck":
 			third_party_pack_count += 1
-			if third_party_pack_count > 0:
-				print("\tThird-Party Resource Packs detected: %s"%third_party_pack_count)
+		if third_party_pack_count > 0:
+			print("\tThird-Party Resource Packs detected: %s"%third_party_pack_count)
 	_initialize_asset_library()
 	if ModdableFrameworkMainLoopSettings.get_setting("Bootup/Verbose"): 
 		var third_party_asset_count := 0
 		for path in third_party_paths: if not (path.get_extension() == "dll" or path.get_extension() == "so" or path.get_extension() == "pck"):
 			third_party_asset_count += 1
-			if third_party_asset_count > 0:
-				print("\tThird-Party assets detected: %s"%third_party_asset_count)
+		if third_party_asset_count > 0:
+			print("\tThird-Party assets detected: %s"%third_party_asset_count)
 	_call_static_function("Initialize")
 	if ModdableFrameworkMainLoopSettings.get_setting("Bootup/Verbose"): 
 		print("Main Loop Initialized in %sms\n"%Time.get_ticks_msec())
