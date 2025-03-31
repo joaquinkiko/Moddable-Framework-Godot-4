@@ -105,6 +105,7 @@ static func run_modless() -> bool:
 ## Updates mod settings, adding new mods, and removing missing mods, and refreshing load order
 static func reload_mod_list() -> void:
 	if not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(MOD_DIR)): return
+	if DirAccess.get_directories_at(ProjectSettings.globalize_path(MOD_DIR)).size() == 0: return
 	if FileAccess.file_exists(MOD_SETTINGS_PATH): mod_settings.load(MOD_SETTINGS_PATH)
 	else: mod_settings.save(MOD_SETTINGS_PATH)
 	if run_modless():
