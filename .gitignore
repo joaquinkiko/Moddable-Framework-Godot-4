@@ -1,0 +1,12 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+# Ignore Godot Project files
+*.uid
+.editorconfig
+asset_library.cfg
+export_presets.cfg
+project.godot
+license.md
+testing/
+.extensions/
